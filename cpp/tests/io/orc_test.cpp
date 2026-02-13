@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2019-2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2019-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -2208,7 +2208,7 @@ TEST_F(OrcChunkedWriterTest, FailedWriteCloseNotThrow)
     size_t bytes_written() override { return 0; }
   };
 
-  auto sequence = thrust::make_counting_iterator(0);
+  auto sequence = cuda::make_counting_iterator(0);
   column_wrapper<int8_t> col(sequence, sequence + 10);
   table_view table({col});
 

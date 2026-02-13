@@ -21,7 +21,7 @@
 #include <cuco/hyperloglog.cuh>
 #include <cuco/hyperloglog_ref.cuh>
 #include <cuda/functional>
-#include <thrust/iterator/counting_iterator.h>
+#include <cuda/iterator>
 
 #include <bit>
 
@@ -166,7 +166,7 @@ void approx_distinct_count<Hasher>::add(table_view const& input, rmm::cuda_strea
   } else {
     // Exclude nulls
     auto const hash_iter = cudf::detail::make_counting_transform_iterator(0, hash_key);
-    auto const stencil   = thrust::counting_iterator{0};
+    auto const stencil   = cuda::counting_iterator{0};
 
     if (_nan_handling == nan_policy::NAN_IS_VALID) {
       if (!has_nulls) {

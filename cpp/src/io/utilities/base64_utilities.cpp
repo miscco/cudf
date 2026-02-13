@@ -1,6 +1,6 @@
 /*
  * SPDX-FileCopyrightText: Copyright (C) 2004-2017, 2020-2022 René Nyffenegger
- * SPDX-FileCopyrightText: Copyright (c) 2024-2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0 AND Zlib
  */
 
@@ -52,7 +52,7 @@
 
 #include <cudf/logger.hpp>
 
-#include <thrust/iterator/counting_iterator.h>
+#include <cuda/iterator>
 
 #include <algorithm>
 
@@ -81,8 +81,8 @@ std::string base64_encode(std::string_view string_to_encode)
 
   // altered: modify base64 encoder loop using STL and Thrust.
   // TODO: Port this loop to thrust cooperative groups if needed for too-wide tables.
-  std::for_each(thrust::make_counting_iterator(0),
-                thrust::make_counting_iterator(num_iterations),
+  std::for_each(cuda::make_counting_iterator(0),
+                cuda::make_counting_iterator(num_iterations),
                 [&](auto&& iter) {
                   auto idx = iter * 3;
 
@@ -155,8 +155,8 @@ std::string base64_decode(std::string_view encoded_string)
   // altered: modify base64 encoder loop to number of iterations using STL and Thrust.
   // TODO: Port this loop to thrust cooperative groups if needed for too-wide tables.
   if (not std::all_of(
-        thrust::make_counting_iterator(0),
-        thrust::make_counting_iterator(num_iterations),
+        cuda::make_counting_iterator(0),
+        cuda::make_counting_iterator(num_iterations),
         [&](auto&& iter) {
           int32_t idx                  = iter * 4;
           size_t current_char_position = 0;

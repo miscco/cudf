@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2024-2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -59,7 +59,7 @@ TEST_F(PinnedMemoryTest, MemoryResourceGetAndSet)
   constexpr int num_rows = 32 * 1024;
   auto valids =
     cudf::detail::make_counting_transform_iterator(0, [&](int index) { return index % 2; });
-  auto values = thrust::make_counting_iterator(0);
+  auto values = cuda::make_counting_iterator(0);
 
   cudf::test::fixed_width_column_wrapper<int> col(values, values + num_rows, valids);
 

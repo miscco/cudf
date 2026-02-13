@@ -80,7 +80,7 @@ struct column_sorted_order_fn {
   {
     auto keys      = column_device_view::create(input, stream);
     auto comp      = simple_comparator<T>{*keys, input.has_nulls(), ascending, null_precedence};
-    auto in_keys   = thrust::make_counting_iterator<cudf::size_type>(0);
+    auto in_keys   = cuda::make_counting_iterator<cudf::size_type>(0);
     auto out_keys  = indices.begin<size_type>();
     auto tmp_bytes = std::size_t{0};
     if constexpr (method == sort_method::STABLE) {

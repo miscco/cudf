@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2020-2024, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2020-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -18,7 +18,7 @@
 #include <cudf/scalar/scalar.hpp>
 #include <cudf/types.hpp>
 
-#include <thrust/iterator/counting_iterator.h>
+#include <cuda/iterator>
 
 #include <stdexcept>
 
@@ -506,7 +506,7 @@ struct ListGetStructValueTest : public cudf::test::BaseFixture {
       num_lists, null_count == 0 ? cudf::mask_state::UNALLOCATED : cudf::mask_state::ALL_NULL);
     if (null_count > 0) {
       std::for_each(
-        thrust::make_counting_iterator(0), thrust::make_counting_iterator(num_lists), [&](auto i) {
+        cuda::make_counting_iterator(0), cuda::make_counting_iterator(num_lists), [&](auto i) {
           if (*(null_mask.begin() + i)) {
             cudf::set_null_mask(
               static_cast<cudf::bitmask_type*>(d_null_mask.data()), i, i + 1, true);

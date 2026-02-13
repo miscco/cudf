@@ -366,8 +366,8 @@ class device_row_comparator {
         requires(cudf::is_equality_comparable<Element, Element>())
       {
         return thrust::all_of(thrust::seq,
-                              thrust::make_counting_iterator(0),
-                              thrust::make_counting_iterator(0) + size,
+                              cuda::make_counting_iterator(0),
+                              cuda::make_counting_iterator(0) + size,
                               [this](auto i) { return comp.template operator()<Element>(i, i); });
       }
 

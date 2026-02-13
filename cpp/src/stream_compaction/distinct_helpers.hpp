@@ -18,8 +18,8 @@
 
 #include <cuco/static_set.cuh>
 #include <cuda/functional>
+#include <cuda/iterator>
 #include <cuda/std/iterator>
-#include <thrust/iterator/counting_iterator.h>
 
 namespace cudf::detail {
 

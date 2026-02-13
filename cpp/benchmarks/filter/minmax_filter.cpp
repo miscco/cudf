@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -69,8 +69,8 @@ void BM_filter_min_max(nvbench::state& state)
   profile.set_null_probability(nullable ? std::optional{0.3} : std::nullopt);
 
   std::vector<std::unique_ptr<cudf::column>> filter_columns;
-  std::transform(thrust::make_counting_iterator(0),
-                 thrust::make_counting_iterator(num_filter_columns),
+  std::transform(cuda::make_counting_iterator(0),
+                 cuda::make_counting_iterator(num_filter_columns),
                  std::back_inserter(filter_columns),
                  [&](auto) {
                    return create_random_column(

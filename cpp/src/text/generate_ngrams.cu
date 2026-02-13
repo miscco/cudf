@@ -30,9 +30,9 @@
 #include <cooperative_groups.h>
 #include <cooperative_groups/reduce.h>
 #include <cuda/functional>
+#include <cuda/iterator>
 #include <cuda/std/iterator>
 #include <thrust/copy.h>
-#include <thrust/iterator/counting_iterator.h>
 
 #include <stdexcept>
 

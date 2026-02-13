@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -17,7 +17,7 @@
 
 #include <rmm/cuda_stream_view.hpp>
 
-#include <thrust/iterator/counting_iterator.h>
+#include <cuda/iterator>
 
 #include <nvbench/nvbench.cuh>
 #include <nvbench/types.cuh>
@@ -52,13 +52,13 @@ static void BM_transform(nvbench::state& state)
   std::string expression;
   if constexpr (reuse_columns) {
     expression = "c0 " + op + " c0";
-    std::for_each(thrust::make_counting_iterator(1),
-                  thrust::make_counting_iterator(num_columns),
+    std::for_each(cuda::make_counting_iterator(1),
+                  cuda::make_counting_iterator(num_columns),
                   [&](int) { expression = "( " + expression + " ) " + op + " c0 "; });
   } else {
     expression = "c0 " + op + " c1";
     std::for_each(
-      thrust::make_counting_iterator(2), thrust::make_counting_iterator(num_columns), [&](int col) {
+      cuda::make_counting_iterator(2), cuda::make_counting_iterator(num_columns), [&](int col) {
         expression = "( " + expression + " ) " + op + " c" + std::to_string(col);
       });
   }
@@ -66,8 +66,8 @@ static void BM_transform(nvbench::state& state)
   std::string type_name = cudf::type_to_name(cudf::data_type{cudf::type_to_id<key_type>()});
   std::string params    = type_name + " c0";
 
-  std::for_each(thrust::make_counting_iterator(1),
-                thrust::make_counting_iterator(num_columns),
+  std::for_each(cuda::make_counting_iterator(1),
+                cuda::make_counting_iterator(num_columns),
                 [&](int param) { params += ", " + type_name + " c" + std::to_string(param); });
 
   std::string code =
@@ -75,8 +75,8 @@ static void BM_transform(nvbench::state& state)
 
   std::vector<cudf::column_view> inputs;
 
-  std::transform(thrust::make_counting_iterator(0),
-                 thrust::make_counting_iterator(source_table->num_columns()),
+  std::transform(cuda::make_counting_iterator(0),
+                 cuda::make_counting_iterator(source_table->num_columns()),
                  std::back_inserter(inputs),
                  [&source_table](int col) { return source_table->get_column(col).view(); });
 

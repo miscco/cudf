@@ -160,8 +160,8 @@ filter_join_indices(cudf::table_view const& left,
     auto valid_predicate = [=] __device__(size_type i) -> bool { return predicate_results_ptr[i]; };
 
     auto const num_valid =
-      cudf::detail::count_if(thrust::counting_iterator<size_type>(0),
-                             thrust::counting_iterator{static_cast<size_type>(left_indices.size())},
+      cudf::detail::count_if(cuda::counting_iterator<size_type>(0),
+                             cuda::counting_iterator{static_cast<size_type>(left_indices.size())},
                              valid_predicate,
                              stream);
 
@@ -177,7 +177,7 @@ filter_join_indices(cudf::table_view const& left,
     cudf::detail::copy_if(
       input_iter,
       input_iter + left_indices.size(),
-      thrust::counting_iterator<size_type>{0},
+      cuda::counting_iterator<size_type>{0},
       output_iter,
       [valid_predicate] __device__(size_type idx) { return valid_predicate(idx); },
       stream);
@@ -297,8 +297,8 @@ filter_join_indices(cudf::table_view const& left,
 
     // Count failed matches for output sizing
     auto const failed_matched_count =
-      cudf::detail::count_if(thrust::counting_iterator{0},
-                             thrust::counting_iterator{static_cast<size_type>(left_indices.size())},
+      cudf::detail::count_if(cuda::counting_iterator{0},
+                             cuda::counting_iterator{static_cast<size_type>(left_indices.size())},
                              is_failed_matched_pair,
                              stream);
     auto const output_size = left_indices.size() + failed_matched_count;
@@ -310,8 +310,8 @@ filter_join_indices(cudf::table_view const& left,
     // Use two-step approach with optimized memory management
     // Step 1: Handle primary pairs
     thrust::transform(rmm::exec_policy_nosync(stream),
-                      thrust::counting_iterator{0},
-                      thrust::counting_iterator{static_cast<size_type>(left_indices.size())},
+                      cuda::counting_iterator{0},
+                      cuda::counting_iterator{static_cast<size_type>(left_indices.size())},
                       thrust::make_zip_iterator(cuda::std::tuple{filtered_left_indices->begin(),
                                                                  filtered_right_indices->begin()}),
                       [=] __device__(size_type i) -> cuda::std::tuple<size_type, size_type> {
@@ -339,7 +339,7 @@ filter_join_indices(cudf::table_view const& left,
       thrust::copy_if(rmm::exec_policy_nosync(stream),
                       failed_match_iter,
                       failed_match_iter + left_indices.size(),
-                      thrust::counting_iterator{0},
+                      cuda::counting_iterator{0},
                       secondary_iter,
                       is_failed_matched_pair);
     }

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2024-2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -21,7 +21,7 @@
 #include <cudf/table/table_view.hpp>
 #include <cudf/types.hpp>
 
-#include <thrust/iterator/counting_iterator.h>
+#include <cuda/iterator>
 
 struct FromArrowDeviceTest : public cudf::test::BaseFixture {};
 
@@ -616,7 +616,7 @@ TYPED_TEST(FromArrowDeviceTestDecimalsTest, FixedPointTableLarge)
   auto constexpr NUM_ELEMENTS = 1000;
 
   for (auto const scale : {3, 2, 1, 0, -1, -2, -3}) {
-    auto iota           = thrust::make_counting_iterator(1);
+    auto iota           = cuda::make_counting_iterator(1);
     auto const data     = std::vector<T>(iota, iota + NUM_ELEMENTS);
     auto const col      = fp_wrapper<T>(iota, iota + NUM_ELEMENTS, scale_type{scale});
     auto const expected = cudf::table_view({col});
@@ -714,7 +714,7 @@ TYPED_TEST(FromArrowDeviceTestDecimalsTest, FixedPointTableNullsLarge)
   for (auto const scale : {3, 2, 1, 0, -1, -2, -3}) {
     auto every_other    = [](auto i) { return i % 2 ? 0 : 1; };
     auto validity       = cudf::detail::make_counting_transform_iterator(0, every_other);
-    auto iota           = thrust::make_counting_iterator(1);
+    auto iota           = cuda::make_counting_iterator(1);
     auto const data     = std::vector<T>(iota, iota + NUM_ELEMENTS);
     auto const col      = fp_wrapper<T>(iota, iota + NUM_ELEMENTS, validity, scale_type{scale});
     auto const expected = cudf::table_view({col});

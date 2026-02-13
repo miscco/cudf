@@ -263,7 +263,7 @@ void validate_token_stream(device_span<char const> d_input,
     });
 
   auto num_tokens = tokens.size();
-  auto count_it   = thrust::make_counting_iterator(0);
+  auto count_it   = cuda::make_counting_iterator(0);
   auto predicate  = cuda::proclaim_return_type<bool>([tokens        = tokens.begin(),
                                                      token_indices = token_indices.begin(),
                                                      validate_values,

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2021-2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2021-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -153,7 +153,7 @@ std::string type_to_name(column_buffer_base<string_policy> const& buffer)
     std::ostringstream out;
 
     out << "Struct<";
-    auto iter = thrust::make_counting_iterator(0);
+    auto iter = cuda::make_counting_iterator(0);
     std::transform(
       iter,
       iter + buffer.children.size(),

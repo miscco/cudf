@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2022-2024, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2022-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -16,7 +16,7 @@
 #include <cudf/scalar/scalar_factories.hpp>
 #include <cudf/table/table_view.hpp>
 
-#include <thrust/iterator/counting_iterator.h>
+#include <cuda/iterator>
 
 #include <algorithm>
 #include <vector>
@@ -101,7 +101,7 @@ struct GroupedRollingRangeOrderByNumericTest : public BaseGroupedRollingRangeOrd
   [[nodiscard]] column_ptr generate_order_by_column() const
   {
     auto const begin = thrust::make_transform_iterator(
-      thrust::make_counting_iterator<cudf::size_type>(0), [&](T const& i) -> T { return i * 100; });
+      cuda::make_counting_iterator<cudf::size_type>(0), [&](T const& i) -> T { return i * 100; });
 
     return fwcw<T>(begin, begin + num_rows).release();
   }
@@ -110,7 +110,7 @@ struct GroupedRollingRangeOrderByNumericTest : public BaseGroupedRollingRangeOrd
   [[nodiscard]] column_ptr generate_negative_order_by_column() const
   {
     auto const begin =
-      thrust::make_transform_iterator(thrust::make_counting_iterator<cudf::size_type>(0),
+      thrust::make_transform_iterator(cuda::make_counting_iterator<cudf::size_type>(0),
                                       [&](T const& i) -> T { return (i - num_rows) * 100; });
 
     return fwcw<T>(begin, begin + num_rows).release();
@@ -402,7 +402,7 @@ struct GroupedRollingRangeOrderByDecimalTypedTest
   [[nodiscard]] column_ptr generate_order_by_column(numeric::scale_type scale) const
   {
     auto const begin = thrust::make_transform_iterator(
-      thrust::make_counting_iterator<Rep>(0),
+      cuda::make_counting_iterator<Rep>(0),
       [&](auto i) -> Rep { return (i * 10000) / base::pow10[scale + 2]; });
 
     return decimals_column<Rep>{begin, begin + num_rows, numeric::scale_type{scale}}.release();

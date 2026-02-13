@@ -44,24 +44,24 @@ jitify2::StringVec build_jit_template_params(
   tparams.emplace_back(jitify2::reflection::reflect(may_evaluate_null));
   tparams.emplace_back(jitify2::reflection::reflect(has_user_data));
 
-  std::transform(thrust::counting_iterator<size_t>(0),
-                 thrust::counting_iterator(span_outputs.size()),
+  std::transform(cuda::counting_iterator<size_t>(0),
+                 cuda::counting_iterator(span_outputs.size()),
                  std::back_inserter(tparams),
                  [&](auto i) {
                    return jitify2::reflection::Template("cudf::jit::span_accessor")
                      .instantiate(span_outputs[i], i);
                  });
 
-  std::transform(thrust::counting_iterator<size_t>(0),
-                 thrust::counting_iterator(column_outputs.size()),
+  std::transform(cuda::counting_iterator<size_t>(0),
+                 cuda::counting_iterator(column_outputs.size()),
                  std::back_inserter(tparams),
                  [&](auto i) {
                    return jitify2::reflection::Template("cudf::jit::column_accessor")
                      .instantiate(column_outputs[i], i);
                  });
 
-  std::transform(thrust::counting_iterator<size_t>(0),
-                 thrust::counting_iterator(column_inputs.size()),
+  std::transform(cuda::counting_iterator<size_t>(0),
+                 cuda::counting_iterator(column_inputs.size()),
                  std::back_inserter(tparams),
                  [&](auto i) { return column_inputs[i].accessor(i); });
 

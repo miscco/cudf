@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -102,8 +102,8 @@ std::unique_ptr<column> from_arrow_stringview(ArrowSchemaView const* schema,
   auto d_indices = rmm::device_uvector<string_index_pair>(input->length, stream, mr);
   thrust::transform(
     rmm::exec_policy_nosync(stream),
-    thrust::counting_iterator<cudf::size_type>(0),
-    thrust::counting_iterator<cudf::size_type>(input->length),
+    cuda::counting_iterator<cudf::size_type>(0),
+    cuda::counting_iterator<cudf::size_type>(input->length),
     d_indices.begin(),
     [d_items = d_items.data(), d_ptrs, d_mask] __device__(auto idx) -> string_index_pair {
       if (d_mask && !bit_is_set(d_mask, idx)) { return string_index_pair{nullptr, 0}; }

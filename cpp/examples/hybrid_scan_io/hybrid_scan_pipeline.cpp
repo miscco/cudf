@@ -235,8 +235,8 @@ auto hybrid_scan_pipelined(io_source const& io_source,
   std::vector<hybrid_scan_fn> read_tasks;
   read_tasks.reserve(num_partitions);
   std::for_each(
-    thrust::make_counting_iterator(0),
-    thrust::make_counting_iterator(num_partitions),
+    cuda::make_counting_iterator(0),
+    cuda::make_counting_iterator(num_partitions),
     [&](auto task_id) {
       read_tasks.emplace_back(hybrid_scan_fn{.table              = std::ref(tables[task_id]),
                                              .reader             = std::move(readers[task_id]),

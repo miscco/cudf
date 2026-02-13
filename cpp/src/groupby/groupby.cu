@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2019-2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2019-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -29,7 +29,7 @@
 
 #include <rmm/cuda_stream_view.hpp>
 
-#include <thrust/iterator/counting_iterator.h>
+#include <cuda/iterator>
 
 #include <memory>
 #include <utility>
@@ -303,8 +303,8 @@ std::pair<std::unique_ptr<table>, std::unique_ptr<table>> groupby::replace_nulls
   std::vector<std::unique_ptr<column>> results;
   results.reserve(values.num_columns());
   std::transform(
-    thrust::make_counting_iterator(0),
-    thrust::make_counting_iterator(values.num_columns()),
+    cuda::make_counting_iterator(0),
+    cuda::make_counting_iterator(values.num_columns()),
     std::back_inserter(results),
     [&](auto i) {
       bool nullable       = values.column(i).nullable();
@@ -350,8 +350,8 @@ std::pair<std::unique_ptr<table>, std::unique_ptr<table>> groupby::shift(
   std::vector<std::unique_ptr<column>> results;
   auto const& group_offsets = helper().group_offsets(stream);
   std::transform(
-    thrust::make_counting_iterator(0),
-    thrust::make_counting_iterator(values.num_columns()),
+    cuda::make_counting_iterator(0),
+    cuda::make_counting_iterator(values.num_columns()),
     std::back_inserter(results),
     [&](size_type i) {
       auto grouped_values =

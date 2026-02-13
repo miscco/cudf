@@ -19,7 +19,7 @@
 #include <rmm/exec_policy.hpp>
 
 #include <cuda/functional>
-#include <thrust/iterator/counting_iterator.h>
+#include <cuda/iterator>
 #include <thrust/iterator/discard_iterator.h>
 #include <thrust/iterator/transform_iterator.h>
 #include <thrust/scan.h>
@@ -99,10 +99,10 @@ std::unique_ptr<column> group_nth_element(column_view const& values,
     }();
     // gather the valid index == n
     thrust::scatter_if(rmm::exec_policy_nosync(stream),
-                       thrust::make_counting_iterator<size_type>(0),
-                       thrust::make_counting_iterator<size_type>(values.size()),
-                       group_labels.begin(),                          // map
-                       thrust::make_counting_iterator<size_type>(0),  // stencil
+                       cuda::make_counting_iterator<size_type>(0),
+                       cuda::make_counting_iterator<size_type>(values.size()),
+                       group_labels.begin(),                        // map
+                       cuda::make_counting_iterator<size_type>(0),  // stencil
                        nth_index.begin(),
                        [n,
                         bitmask_iterator,

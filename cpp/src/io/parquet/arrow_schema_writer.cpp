@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2024-2025, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION.
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -303,8 +303,8 @@ struct dispatch_to_flatbuf {
 
     // Traverse the struct in DFS manner and process children fields.
     else if constexpr (std::is_same_v<T, cudf::struct_view>) {
-      std::transform(thrust::make_counting_iterator(0UL),
-                     thrust::make_counting_iterator(col->children.size()),
+      std::transform(cuda::make_counting_iterator(0UL),
+                     cuda::make_counting_iterator(col->children.size()),
                      std::back_inserter(children),
                      [&](auto const idx) {
                        return make_arrow_schema_fields(

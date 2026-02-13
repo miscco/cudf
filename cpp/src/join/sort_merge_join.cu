@@ -265,8 +265,8 @@ merge<LargerIterator, SmallerIterator>::inner(rmm::cuda_stream_view stream,
   auto const count_matches = thrust::reduce(
     rmm::exec_policy_nosync(stream), count_matches_it, count_matches_it + larger_numrows);
   rmm::device_uvector<size_type> nonzero_matches(count_matches, stream, temp_mr);
-  cudf::detail::copy_if(thrust::counting_iterator<size_type>(0),
-                        thrust::counting_iterator<size_type>(larger_numrows),
+  cudf::detail::copy_if(cuda::counting_iterator<size_type>(0),
+                        cuda::counting_iterator<size_type>(larger_numrows),
                         match_counts->begin(),
                         nonzero_matches.begin(),
                         cuda::std::identity{},
@@ -557,7 +557,7 @@ void sort_merge_join::preprocessed_table::populate_nonnull_filter(rmm::cuda_stre
         rmm::exec_policy_nosync(stream),
         cuda::std::reverse_iterator(lcv.offsets_end()),
         cuda::std::reverse_iterator(lcv.offsets_end()) + offsets.size(),
-        cuda::std::reverse_iterator(thrust::counting_iterator(offsets.size())),
+        cuda::std::reverse_iterator(cuda::counting_iterator(offsets.size())),
         cuda::std::reverse_iterator(offsets_subset.end()),
         cuda::std::reverse_iterator(child_positions.end()));
       auto subset_size   = cuda::std::distance(cuda::std::reverse_iterator(offsets_subset.end()),
@@ -576,8 +576,8 @@ void sort_merge_join::preprocessed_table::populate_nonnull_filter(rmm::cuda_stre
 
       thrust::for_each(
         rmm::exec_policy_nosync(stream),
-        thrust::counting_iterator(0),
-        thrust::counting_iterator(0) + subset_size,
+        cuda::counting_iterator(0),
+        cuda::counting_iterator(0) + subset_size,
         list_nonnull_filter{static_cast<bitmask_type*>(validity_mask.data()),
                             static_cast<bitmask_type const*>(reduced_validity_mask.data()),
                             child_positions,
@@ -775,16 +775,16 @@ auto sort_merge_join::invoke_merge(preprocessed_table const& preprocessed_left,
               r_view.begin<size_type>(),
               r_view.end<size_type>(),
               left_view,
-              thrust::counting_iterator(0),
-              thrust::counting_iterator(left_view.num_rows()),
+              cuda::counting_iterator(0),
+              cuda::counting_iterator(left_view.num_rows()),
               stream);
     return op(obj);
   } else if (!has_right_sorting_order && has_left_sorting_order) {
     // preprocessed_right unsorted, preprocessed_left sorted
     auto l_view = preprocessed_left._null_processed_table_sorted_order.value()->view();
     merge obj(right_view,
-              thrust::counting_iterator(0),
-              thrust::counting_iterator(preprocessed_right._null_processed_table_view.num_rows()),
+              cuda::counting_iterator(0),
+              cuda::counting_iterator(preprocessed_right._null_processed_table_view.num_rows()),
               left_view,
               l_view.begin<size_type>(),
               l_view.end<size_type>(),
@@ -793,11 +793,11 @@ auto sort_merge_join::invoke_merge(preprocessed_table const& preprocessed_left,
   }
   // Both unsorted
   merge obj(right_view,
-            thrust::counting_iterator(0),
-            thrust::counting_iterator(preprocessed_right._null_processed_table_view.num_rows()),
+            cuda::counting_iterator(0),
+            cuda::counting_iterator(preprocessed_right._null_processed_table_view.num_rows()),
             left_view,
-            thrust::counting_iterator(0),
-            thrust::counting_iterator(left_view.num_rows()),
+            cuda::counting_iterator(0),
+            cuda::counting_iterator(left_view.num_rows()),
             stream);
   return op(obj);
 }
